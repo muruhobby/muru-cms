@@ -25,4 +25,9 @@ EXPOSE 9000
 # Default command. On Railway, DB setup (migrate/bootstrap/seed) runs via the
 # preDeployCommand in railway.toml; this just starts the server. The CMD is a
 # sensible fallback for running the image outside Railway.
+#
+# Note: start:prod cd's into .medusa/server before `medusa start`, because the
+# admin build output (public/admin/index.html) is resolved relative to that
+# directory. Module resolution falls back to /app/node_modules, so there's no
+# need for a second install inside .medusa/server.
 CMD ["npm", "run", "start:prod"]

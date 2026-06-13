@@ -13,6 +13,19 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     }
   },
+  // Admin dashboard config. Set explicitly so Medusa reliably serves the built
+  // admin in production. Without an explicit admin block the server can fail to
+  // resolve the build output ("Could not find index.html in the admin build
+  // directory").
+  admin: {
+    // Keep the dashboard served by this backend (not a separate host).
+    disable: false,
+    // Path the dashboard is served at.
+    path: "/app",
+    // Absolute URL the admin bundle uses to reach this backend. Required in
+    // production, where the admin is not running against localhost.
+    backendUrl: process.env.MEDUSA_BACKEND_URL,
+  },
   // Role-based access control. The env var MEDUSA_FF_RBAC takes precedence over
   // this and is what we rely on at deploy time (see .env); this line documents
   // the intent and keeps RBAC on even if the env var is omitted.
@@ -43,6 +56,28 @@ module.exports = defineConfig({
               file_url: process.env.R2_PUBLIC_URL,
               // R2 is region-agnostic; the S3 API expects "auto".
               region: "auto",
+            },
+          },
+        ],
+      },
+    },
+    // Fulfillment — the default "manual" provider stays auto-registered; we add
+    // Biteship for live Indonesian courier rates (JNE, J&T) at checkout.
+    {
+      resolve: "@medusajs/medusa/fulfillment",
+      options: {
+        providers: [
+          {
+            resolve: "./src/modules/biteship",
+            id: "biteship",
+            options: {
+              apiKey: process.env.BITESHIP_API_KEY,
+              originPostalCode: process.env.BITESHIP_ORIGIN_POSTAL_CODE,
+              couriers: process.env.BITESHIP_COURIERS || "jne,jnt",
+              defaultWeight: Number(process.env.BITESHIP_DEFAULT_WEIGHT || 1000),
+              originContactName: process.env.BITESHIP_ORIGIN_CONTACT_NAME,
+              originContactPhone: process.env.BITESHIP_ORIGIN_CONTACT_PHONE,
+              originAddress: process.env.BITESHIP_ORIGIN_ADDRESS,
             },
           },
         ],

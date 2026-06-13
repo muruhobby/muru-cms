@@ -18,7 +18,7 @@
     "seed:employee-role": "medusa exec ./src/scripts/seed-employee-role.ts",
     "start": "medusa start",
     "predeploy:prod": "medusa db:migrate && medusa exec ./src/scripts/bootstrap-admin.ts && medusa exec ./src/scripts/seed-employee-role.ts",
-    "start:prod": "medusa start",
+    "start:prod": "cd .medusa/server && medusa start",
     "dev": "medusa develop",
     "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
     "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
