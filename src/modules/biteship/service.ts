@@ -35,9 +35,9 @@ export default class BiteshipFulfillmentProviderService extends AbstractFulfillm
   constructor(_cradle: unknown, options: BiteshipOptions) {
     super();
     this.options_ = {
-      defaultWeight: 1000,
-      couriers: "jne,jnt",
       ...options,
+      defaultWeight: options.defaultWeight ?? 1000,
+      couriers: options.couriers ?? "jne,jnt",
     };
     this.client_ = new BiteshipClient(this.options_.apiKey);
   }

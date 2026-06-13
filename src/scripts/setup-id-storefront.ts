@@ -183,6 +183,9 @@ export default async function setupIdStorefront({ container }: ExecArgs) {
     logger.info(`Using existing service zone "${serviceZone.name}" (${serviceZone.id}).`);
   }
 
+  if (!serviceZone) {
+    throw new Error("Could not resolve a service zone for Indonesia delivery.");
+  }
   const serviceZoneId = serviceZone.id;
 
   // 7. Shipping options ------------------------------------------------------
