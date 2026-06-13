@@ -22,5 +22,7 @@ RUN npm run build
 ENV NODE_ENV=production
 EXPOSE 9000
 
-# Runs migrations, bootstraps the admin, seeds the employee role, then starts.
+# Default command. On Railway, DB setup (migrate/bootstrap/seed) runs via the
+# preDeployCommand in railway.toml; this just starts the server. The CMD is a
+# sensible fallback for running the image outside Railway.
 CMD ["npm", "run", "start:prod"]

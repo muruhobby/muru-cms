@@ -3,8 +3,15 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Runs migrations, then idempotently bootstraps the admin (ADMIN_EMAIL /
-# ADMIN_PASSWORD env vars), then starts the server.
+# Runs DB migrations, then idempotently bootstraps the admin (ADMIN_EMAIL /
+# ADMIN_PASSWORD env vars) and seeds the employee role. This runs after build
+# but BEFORE the instance goes live and before the healthcheck window starts,
+# so the 6+ minutes of migrations on a fresh DB don't eat into the healthcheck
+# timeout.
+preDeployCommand = "npm run predeploy:prod"
+
+# Pure server start — binds the HTTP port immediately so /health responds well
+# within healthcheckTimeout.
 startCommand = "npm run start:prod"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
