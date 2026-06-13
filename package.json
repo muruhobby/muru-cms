@@ -19,7 +19,7 @@
     "setup:shipping": "medusa exec ./src/scripts/setup-biteship-shipping.ts",
     "seed:products": "medusa exec ./src/scripts/seed-muru-products.ts",
     "start": "medusa start",
-    "predeploy:prod": "medusa db:migrate && medusa exec ./src/scripts/bootstrap-admin.ts && medusa exec ./src/scripts/seed-employee-role.ts",
+    "predeploy:prod": "medusa db:migrate && medusa exec ./src/scripts/bootstrap-admin.ts && medusa exec ./src/scripts/seed-employee-role.ts && medusa exec ./src/scripts/setup-id-storefront.ts && medusa exec ./src/scripts/setup-biteship-shipping.ts && medusa exec ./src/scripts/seed-muru-products.ts",
     "start:prod": "cd .medusa/server && medusa start",
     "dev": "medusa develop",
     "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",

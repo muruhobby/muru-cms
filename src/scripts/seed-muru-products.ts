@@ -58,6 +58,24 @@ export default async function seedMuruProducts({ container }: ExecArgs) {
   );
   logger.info(`Loaded catalog: ${catalog.length} products.`);
 
+  // Run-once guard: if the catalog is already fully seeded, skip. This keeps
+  // deploys fast and preserves admin edits to these products, since the seed
+  // below otherwise deletes and recreates every catalog product.
+  const catalogHandles = new Set(catalog.map((p) => p.handle));
+  const { data: alreadySeeded } = await query.graph({
+    entity: "product",
+    fields: ["id", "handle"],
+  });
+  const seededCount = alreadySeeded.filter((p: any) =>
+    catalogHandles.has(p.handle)
+  ).length;
+  if (seededCount >= catalog.length) {
+    logger.info(
+      `Catalog already seeded (${seededCount}/${catalog.length} present) — skipping.`
+    );
+    return;
+  }
+
   const [salesChannel] = await salesChannelModule.listSalesChannels({
     name: "Default Sales Channel",
   });
