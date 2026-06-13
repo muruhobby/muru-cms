@@ -1,63 +1,34 @@
-# Custom CLI Script
+# CLI scripts
 
-A custom CLI script is a function to execute through Medusa's CLI tool. This is useful when creating custom Medusa tooling to run as a CLI tool.
+Run any script with `npx medusa exec ./src/scripts/<file>.ts` (or the npm alias).
 
-> Learn more about custom CLI scripts in [this documentation](https://docs.medusajs.com/learn/fundamentals/custom-cli-scripts).
+## Production deployment
 
-## How to Create a Custom CLI Script?
+These run automatically in `predeploy:prod` (`npm run` aliases shown):
 
-To create a custom CLI script, create a TypeScript or JavaScript file under the `src/scripts` directory. The file must default export a function.
+| Script | npm alias | What it does |
+| --- | --- | --- |
+| `bootstrap-admin.ts` | `bootstrap:admin` | Idempotently creates the admin owner from `ADMIN_EMAIL`/`ADMIN_PASSWORD` and grants Super Admin. Safe on every deploy. |
+| `seed-employee-role.ts` | `seed:employee-role` | Creates/updates the RBAC **Employee** role and its allowed resources. Safe on every deploy. |
 
-For example, create the file `src/scripts/my-script.ts` with the following content:
+Run **once** on a fresh production database (idempotent — safe to re-run):
 
-```ts title="src/scripts/my-script.ts"
-import { 
-  ExecArgs,
-} from "@medusajs/framework/types"
+| Script | npm alias | What it does |
+| --- | --- | --- |
+| `setup-id-storefront.ts` | `setup:storefront` | Indonesia/IDR region, tax region, sales-channel↔stock-location link, system payment provider. **Checkout cannot work without this.** |
+| `setup-biteship-shipping.ts` | `setup:shipping` | Links the Biteship fulfillment provider to the location and creates the JNE/J&T calculated shipping options (replaces flat options). Requires the Biteship provider to be registered (set `BITESHIP_*` env + restart) and a funded Biteship balance to actually return rates. |
 
-export default async function myScript ({
-  container
-}: ExecArgs) {
-  const productModuleService = container.resolve("product")
+## Optional / development
 
-  const [, count] = await productModuleService.listAndCountProducts()
+| Script | npm alias | What it does |
+| --- | --- | --- |
+| `seed-muru-products.ts` | `seed:products` | Seeds the sample Muru catalog (emoji-placeholder products, IDR prices). Demo data only — a real store adds products in admin. |
 
-  console.log(`You have ${count} product(s)`)
-}
-```
-
-The function receives as a parameter an object having a `container` property, which is an instance of the Medusa Container. Use it to resolve resources in your Medusa application.
-
----
-
-## How to Run Custom CLI Script?
-
-To run the custom CLI script, run the `exec` command:
+## First-time production checklist
 
 ```bash
-npx medusa exec ./src/scripts/my-script.ts
-```
-
----
-
-## Custom CLI Script Arguments
-
-Your script can accept arguments from the command line. Arguments are passed to the function's object parameter in the `args` property.
-
-For example:
-
-```ts
-import { ExecArgs } from "@medusajs/framework/types"
-
-export default async function myScript ({
-  args
-}: ExecArgs) {
-  console.log(`The arguments you passed: ${args}`)
-}
-```
-
-Then, pass the arguments in the `exec` command after the file path:
-
-```bash
-npx medusa exec ./src/scripts/my-script.ts arg1 arg2
+npm run predeploy:prod      # migrate + admin + employee role
+npm run setup:storefront    # region / currency / shipping prerequisites
+npm run setup:shipping      # Biteship courier options (needs BITESHIP_* env)
+# npm run seed:products     # optional sample catalog
 ```

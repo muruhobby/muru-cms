@@ -13,9 +13,11 @@
   ],
   "scripts": {
     "build": "medusa build",
-    "seed": "medusa exec ./src/scripts/seed.ts",
     "bootstrap:admin": "medusa exec ./src/scripts/bootstrap-admin.ts",
     "seed:employee-role": "medusa exec ./src/scripts/seed-employee-role.ts",
+    "setup:storefront": "medusa exec ./src/scripts/setup-id-storefront.ts",
+    "setup:shipping": "medusa exec ./src/scripts/setup-biteship-shipping.ts",
+    "seed:products": "medusa exec ./src/scripts/seed-muru-products.ts",
     "start": "medusa start",
     "predeploy:prod": "medusa db:migrate && medusa exec ./src/scripts/bootstrap-admin.ts && medusa exec ./src/scripts/seed-employee-role.ts",
     "start:prod": "cd .medusa/server && medusa start",

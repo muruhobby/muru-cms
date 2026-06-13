@@ -61,12 +61,17 @@ module.exports = defineConfig({
         ],
       },
     },
-    // Fulfillment — the default "manual" provider stays auto-registered; we add
-    // Biteship for live Indonesian courier rates (JNE, J&T) at checkout.
+    // Fulfillment — declaring `providers` disables any provider NOT listed
+    // (including the built-in manual one), so we keep manual explicitly enabled
+    // alongside Biteship, which adds live Indonesian courier rates (JNE, J&T).
     {
       resolve: "@medusajs/medusa/fulfillment",
       options: {
         providers: [
+          {
+            resolve: "@medusajs/fulfillment-manual",
+            id: "manual",
+          },
           {
             resolve: "./src/modules/biteship",
             id: "biteship",
