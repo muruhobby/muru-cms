@@ -1,0 +1,22 @@
+# Keep the build context small and the image clean. Anything the build
+# produces or that's machine-/secret-specific stays out.
+node_modules
+.medusa
+.git
+.gitignore
+
+# Secrets — Railway injects env vars at runtime; never bake them into the image.
+.env
+.env.*
+!.env.template
+
+# Local cruft
+coverage
+dist
+build
+.cache
+*.log
+.DS_Store
+.vscode
+.idea
+README.md
