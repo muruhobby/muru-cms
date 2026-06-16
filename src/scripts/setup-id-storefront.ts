@@ -4,6 +4,7 @@ import {
   createRegionsWorkflow,
   createShippingOptionsWorkflow,
   createShippingProfilesWorkflow,
+  createStockLocationsWorkflow,
   createTaxRegionsWorkflow,
   linkSalesChannelsToStockLocationWorkflow,
   updateStoresWorkflow,
@@ -101,9 +102,26 @@ export default async function setupIdStorefront({ container }: ExecArgs) {
   }
 
   // 4. Default sales channel + location on store -----------------------------
-  const [stockLocation] = await stockLocationModule.listStockLocations({});
+  // Reuse an existing stock location if one was created in admin; otherwise
+  // create the "South Tangerang" origin location so a fresh DB self-provisions.
+  let [stockLocation] = await stockLocationModule.listStockLocations({});
   if (!stockLocation) {
-    throw new Error("No stock location found — expected 'South Tangerang'.");
+    const { result } = await createStockLocationsWorkflow(container).run({
+      input: {
+        locations: [
+          {
+            name: "South Tangerang",
+            address: {
+              address_1: "South Tangerang",
+              city: "South Tangerang",
+              country_code: COUNTRY,
+            },
+          },
+        ],
+      },
+    });
+    stockLocation = result[0];
+    logger.info('Created stock location "South Tangerang".');
   }
   await updateStoresWorkflow(container).run({
     input: {
