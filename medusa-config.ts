@@ -78,7 +78,7 @@ module.exports = defineConfig({
             options: {
               apiKey: process.env.BITESHIP_API_KEY,
               originPostalCode: process.env.BITESHIP_ORIGIN_POSTAL_CODE,
-              couriers: process.env.BITESHIP_COURIERS || "jne,jnt",
+              couriers: process.env.BITESHIP_COURIERS || "jnt",
               defaultWeight: Number(process.env.BITESHIP_DEFAULT_WEIGHT || 1000),
               originContactName: process.env.BITESHIP_ORIGIN_CONTACT_NAME,
               originContactPhone: process.env.BITESHIP_ORIGIN_CONTACT_PHONE,
